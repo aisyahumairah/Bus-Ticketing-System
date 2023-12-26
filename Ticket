@@ -1,0 +1,67 @@
+// Class representing a Ticket
+class Ticket extends BookingItem implements PaymentProcess {
+    private String type;
+    private double rate;
+    private String description;
+    private String date;
+    private String time;
+
+    public Ticket(String type, double rate, String description, String status) {
+        super(status);
+        this.type = type;
+        this.rate = rate;
+        this.description = description;
+    }
+
+    // Accessors and mutators
+    public String getType() {
+        return type;
+    }
+
+    public double getRate() {
+        return rate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    // Implementing interface method
+    @Override
+    public void pay() {
+        if (getStatus().equals("booked")) {
+            setStatus("paid");
+            System.out.println("Payment successful for the ticket.");
+        } else {
+            System.out.println("Ticket not booked yet.");
+        }
+    }
+
+    // Overriding abstract method
+    @Override
+    public void displayDetails() {
+        System.out.println("Ticket Details:");
+        System.out.println("Type: " + type);
+        System.out.println("Rate: RM" + rate);
+        System.out.println("Description: " + description);
+        System.out.println("Date: " + date);
+        System.out.println("Time: " + time);
+        System.out.println("Status: " + getStatus());
+    }
+}
