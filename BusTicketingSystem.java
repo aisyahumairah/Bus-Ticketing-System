@@ -270,18 +270,18 @@ public class BusTicketingSystem {
 
         do {
             System.out.println("\nBas Lada Putih Ticketing System Menu:");
-            System.out.println("1. Display Booking Items");
+            System.out.println("1. Display Booking Items (Tickets/Passenger)");
             System.out.println("2. Book Ticket for Passenger");
             System.out.println("3. Pay for Booked Ticket");
             System.out.println("4. Delete Booking Item");
             System.out.println("5. Add Passenger");
-            System.out.println("6. Display Passenger");
+            System.out.println("6. Display Passenger Information");
             System.out.println("7. Delete Passenger");
-            System.out.println("8. Edit Information Passenger");
+            System.out.println("8. Edit Passenger Information");
             System.out.println("9. Add New Ticket");
             System.out.println("10. Display Ticket");
             System.out.println("11. Delete Ticket");
-            System.out.println("12. Edit Information Ticket");
+            System.out.println("12. Edit Ticket Information");
             System.out.println("13. Exit\n");
             System.out.print("Enter your choice: ");
             choice = scanner.nextInt();
