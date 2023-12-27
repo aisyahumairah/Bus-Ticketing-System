@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
 // Abstract class representing a booking item
 abstract class BookingItem {
     private int idTicket;
@@ -266,14 +265,14 @@ public class BusTicketingSystem {
     // Method to reduce seat availability after booking
     private static void reduceSeat(Ticket ticket) {
         int ticketId = ticket.getIdTicket();
-        if (ticketId <= 10) { // Assuming IDs 1 to 10 represent Business
+        if (ticketId <= 10) {
             availableBusinessSeats--;
             if (availableBusinessSeats == 0) {
                 System.out.println("Ticket are not available.");
             } else {
                 System.out.println("Business seat booked. Remaining Business seats: " + availableBusinessSeats);
             }
-        } else if (ticketId > 10 && ticketId <= 30) { // Assuming IDs 11 to 30 represent Economy
+        } else if (ticketId > 10 && ticketId <= 30) {
             availableEconomySeats--;
             if (availableEconomySeats == 0) {
                 System.out.println("Ticket are not available.");
@@ -367,34 +366,40 @@ public class BusTicketingSystem {
                 case 1: // display booking items
                     ticketingSystem.displayBookingItems();
                     break;
+
                 case 2: // book ticket for passenger
                     System.out.print("Enter passenger ID: ");
                     int bookPassengerId = scanner.nextInt();
+                    scanner.nextLine();
+
                     System.out.print("Enter Ticket ID: ");
                     int bookTicketID = scanner.nextInt();
-                    System.out.print("Enter ticket type to book (Business/Economy): ");
-                    String bookTicketType = scanner.next();
-                    System.out.print("Enter booking date (dd-MM-yyyy): ");
-                    String bookDate = scanner.next();
-                    System.out.print("Enter booking departure (HH-MM): ");
-                    String bookDeparture = scanner.next();
+                    scanner.nextLine();
 
                     Passenger bookPassenger = findPassengerById(bookPassengerId);
                     Ticket bookTicket = findTicketById(bookTicketID);
-                    
-                    if (bookPassenger != null && bookTicketID != 0) {
-                        bookPassenger.book(bookTicket, bookDate, bookDeparture);
-                        reduceSeat(bookTicket);
-                        ticketingSystem.displayBookingItems();
+
+                    if (bookPassenger != null && bookTicket != null) {
+                        if (bookTicket.getStatus().equals("available")) {
+                            bookPassenger.book(bookTicket, bookTicket.getDate(), bookTicket.getDeparture());
+                            reduceSeat(bookTicket);
+                            ticketingSystem.displayBookingItems();
+                        } else {
+                            System.out.println("Ticket not available for booking.");
+                        }
                     } else {
                         System.out.println("Passenger or ticket not found.");
                     }
                     break;
+
                 case 3: // pay for booked ticket
                     System.out.print("Enter passenger ID: ");
                     int payPassengerId = scanner.nextInt();
+                    scanner.nextLine();
+
                     System.out.print("Enter ticket ID to pay for (Business/Economy): ");
                     int payTicketid = scanner.nextInt();
+                    scanner.nextLine();
                     Passenger payPassenger = findPassengerById(payPassengerId);
                     Ticket payTicket = findTicketById(payTicketid);
                     if (payPassenger != null && payTicket != null) {
@@ -419,13 +424,17 @@ public class BusTicketingSystem {
                     // ... (Adding a new passenger functionality)
                     System.out.print("Enter ID Passenger: ");
                     int passengerId = scanner.nextInt();
-                    scanner.next(); // consume the newline character
+                    scanner.nextLine();
+
                     System.out.print("Enter passenger name: ");
-                    String passengerName = scanner.next();
+                    String passengerName = scanner.nextLine();
+
                     System.out.print("Enter passenger address: ");
-                    String passengerAddress = scanner.next();
+                    String passengerAddress = scanner.nextLine();
+
                     System.out.print("Passenger Status (Active/Not Active): ");
-                    String passengerStatus = scanner.next();
+                    String passengerStatus = scanner.nextLine();
+
                     ticketingSystem.addBookingItem(
                             new Passenger(passengerId, passengerName, passengerAddress, passengerStatus));
 
@@ -462,14 +471,18 @@ public class BusTicketingSystem {
                     // Edit Information Passenger
                     System.out.print("Enter passenger ID to edit: ");
                     int editPassengerId = scanner.nextInt();
+                    scanner.nextLine();
+
                     Passenger passengerToEdit = findPassengerById(editPassengerId);
                     if (passengerToEdit != null) {
                         System.out.print("Enter new passenger name: ");
-                        String newName = scanner.next();
+                        String newName = scanner.nextLine();
+
                         System.out.print("Enter new passenger address: ");
-                        String newAddress = scanner.next();
+                        String newAddress = scanner.nextLine();
+
                         System.out.print("Enter new passenger status (Active/Not Active): ");
-                        String newStatus = scanner.next();
+                        String newStatus = scanner.nextLine();
 
                         passengerToEdit.setName(newName);
                         passengerToEdit.setAddress(newAddress);
@@ -485,25 +498,32 @@ public class BusTicketingSystem {
                 case 9:
                     // Add New Ticket
                     System.out.print("Enter Bus Name: ");
-                    String busName = scanner.next();
+                    String busName = scanner.nextLine();
+
                     System.out.print("Enter ticket type: ");
-                    String newTicketType = scanner.next();
+                    String newTicketType = scanner.nextLine();
+
                     System.out.print("Enter ticket rate: ");
                     double newTicketRate = scanner.nextDouble();
+                    scanner.nextLine();
+
                     System.out.print("Enter ticket description: ");
-                    String newTicketDescription = scanner.next();
+                    String newTicketDescription = scanner.nextLine();
+
                     System.out.print("Enter ticket date (dd-MM-yyyy): ");
-                    String newTicketDate = scanner.next();
+                    String newTicketDate = scanner.nextLine();
+
                     System.out.print("Enter ticket time departure (HH:MM): ");
-                    String newTicketDeparture = scanner.next();
+                    String newTicketDeparture = scanner.nextLine();
+
                     System.out.print("Enter duration (HH:MM): ");
-                    String newDuration = scanner.next();
+                    String newDuration = scanner.nextLine();
+
                     System.out.print("Enter ticket time arrival (HH:MM): ");
-                    String newTicketArrival = scanner.next();
+                    String newTicketArrival = scanner.nextLine();
 
                     Ticket newTicket = new Ticket(busName, newTicketType, newTicketRate, newTicketDescription,
-                            "available", newTicketDate,
-                            newTicketDeparture, newDuration, newTicketArrival);
+                            "available", newTicketDate, newTicketDeparture, newDuration, newTicketArrival);
                     ticketingSystem.addBookingItem(newTicket);
 
                     System.out.println("New ticket added successfully.\n");
@@ -538,18 +558,29 @@ public class BusTicketingSystem {
                     break;
 
                 case 12:
-                    // Edit Information Ticket
                     ticketingSystem.displayBookingItems();
                     System.out.print("Enter ticket ID to edit : ");
-                    int editTicketType = scanner.nextInt();
-                    Ticket ticketToEdit = findTicketById(editTicketType);
+                    int editTicketId = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Ticket ticketToEdit = findTicketById(editTicketId);
                     if (ticketToEdit != null) {
                         System.out.print("Enter new bus name: ");
-                        String newBusName = scanner.next();
+                        String newBusName = scanner.nextLine();
+
                         System.out.print("Enter new ticket rate: ");
-                        double newRate = scanner.nextDouble();
+                        double newRate = 0.0;
+                        if (scanner.hasNextDouble()) {
+                            newRate = scanner.nextDouble();
+                        } else {
+                            System.out.println("Invalid rate format. Please enter a valid number.");
+                            scanner.nextLine();
+                        }
+
+                        scanner.nextLine();
+
                         System.out.print("Enter new ticket description: ");
-                        String newDescription = scanner.next();
+                        String newDescription = scanner.nextLine();
 
                         ticketToEdit.setBusName(newBusName);
                         ticketToEdit.setRate(newRate);
@@ -565,7 +596,6 @@ public class BusTicketingSystem {
 
         } while (choice != 13);
 
-        // Closing scanner to prevent resource leak
         scanner.close();
     }
 }
