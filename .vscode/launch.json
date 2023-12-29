@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "BusTicketingSystem",
+            "request": "launch",
+            "mainClass": "BusTicketingSystem",
+            "projectName": "Mini Project_40e7fdd5"
+        },
+        {
             "name": "Java",
             "type": "java",
             "request": "launch",

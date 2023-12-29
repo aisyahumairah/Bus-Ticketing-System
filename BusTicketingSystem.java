@@ -1,14 +1,15 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 // Abstract class representing a booking item
 abstract class BookingItem {
     private int idTicket;
     private String status;
-    static int idCounter = 1;
+    private static int idCounter = 1;
 
-    public BookingItem(int idTicket, String status) {
-        this.idTicket = idTicket;
+    public BookingItem(String status) {
+        this.idTicket = idCounter++;
         this.status = status;
     }
 
@@ -25,9 +26,6 @@ abstract class BookingItem {
         return idTicket;
     }
 
-    public void setIdTicket(int idTicket) {
-        this.idTicket = idTicket;
-    }
 
     // Abstract method to be overridden by subclasses
     public abstract void displayDetails();
@@ -40,7 +38,8 @@ interface PaymentProcess {
 
 // Class representing a Ticket
 class Ticket extends BookingItem implements PaymentProcess {
-    // private int id = 1;
+    private static int ticketIdCounter = 1000;
+    private int idTicket;
     private String busname;
     private String type;
     private double rate;
@@ -52,7 +51,8 @@ class Ticket extends BookingItem implements PaymentProcess {
 
     public Ticket(String busname, String type, double rate, String description, String status, String date,
             String departure, String duration, String arrival) {
-        super(idCounter++, status);
+        super(status);
+        this.idTicket = ticketIdCounter++;
         this.busname = busname;
         this.type = type;
         this.rate = rate;
@@ -64,9 +64,9 @@ class Ticket extends BookingItem implements PaymentProcess {
     }
 
     // Accessors and mutators
-    // public int getId() {
-    // return id;
-    // }
+    public int getIdTicket() {
+        return idTicket;
+    }
 
     public String getBusName() {
         return busname;
@@ -160,22 +160,22 @@ class Ticket extends BookingItem implements PaymentProcess {
 
 // Class representing a Passenger
 class Passenger extends BookingItem {
-    private int id;
+    private static int passengerIdCounter = 1;
+    private int idPassenger;
     private String name;
     private String address;
 
-    public Passenger(int id, String name, String address, String status) {
-        super(idCounter++, status);
-        this.id = id;
+    public Passenger(String name, String address, String status) {
+        super(status);
+        this.idPassenger = passengerIdCounter++;
         this.name = name;
         this.address = address;
     }
 
     // Accessors and mutators
-    public int getId() {
-        return id;
+    public int getIdPassenger() {
+        return idPassenger;
     }
-
     public String getName() {
         return name;
     }
@@ -184,9 +184,6 @@ class Passenger extends BookingItem {
         return address;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public void setName(String name) {
         this.name = name;
@@ -200,7 +197,7 @@ class Passenger extends BookingItem {
     @Override
     public void displayDetails() {
         System.out.println("Passenger Details:");
-        System.out.println("ID: " + id);
+        System.out.println("ID: " + getIdPassenger());
         System.out.println("Name: " + name);
         System.out.println("Address: " + address);
         System.out.println("Status: " + getStatus());
@@ -240,8 +237,8 @@ public class BusTicketingSystem {
     }
 
     // Method to add new passenger
-    public void addPassenger(int id, String name, String address, String status) {
-        Passenger newPassenger = new Passenger(id, name, address, status);
+    public void addPassenger(String name, String address, String status) {
+        Passenger newPassenger = new Passenger(name, address, status);
         passengers.add(newPassenger);
         System.out.println("New passenger added successfully");
     }
@@ -285,7 +282,7 @@ public class BusTicketingSystem {
     // Helper method to find a passenger by ID
     private static Passenger findPassengerById(int passengerId) {
         for (BookingItem item : bookingItems) {
-            if (item instanceof Passenger && ((Passenger) item).getId() == passengerId) {
+            if (item instanceof Passenger && ((Passenger) item).getIdPassenger() == passengerId) {
                 return (Passenger) item;
             }
         }
@@ -312,29 +309,37 @@ public class BusTicketingSystem {
     }
 
     // Helper method to find an item by ID
-    private static BookingItem findItemById(int itemId) {
+    private static BookingItem findItemById(int itemId, String itemType) {
         for (BookingItem item : bookingItems) {
-            if (item instanceof Passenger && ((Passenger) item).getId() == itemId) {
-                return (Passenger) item;
-            } else if (item instanceof Ticket && ((Ticket) item).getRate() == itemId) {
-                return (Ticket) item;
+            if ("ticket".equalsIgnoreCase(itemType) && item instanceof Ticket && ((Ticket) item).getIdTicket() == itemId) {
+                return item;
+            } else if ("passenger".equalsIgnoreCase(itemType) && item instanceof Passenger && ((Passenger) item).getIdPassenger() == itemId) {
+                return item;
             }
         }
         return null;
     }
+
+    // private static boolean getConfirmation(Scanner scanner) {
+    //     System.out.print("Do you wish to continue? (Y/N): ");
+    //     String response = scanner.next().trim().toLowerCase();
+    //     return response.equals("y");
+    // }
 
     // Main method
     public static void main(String[] args) {
         BusTicketingSystem ticketingSystem = new BusTicketingSystem();
         Scanner scanner = new Scanner(System.in);
 
+        // boolean continueExecution;
+
         // Adding some initial booking items
         Ticket ticket1 = new Ticket("Star Mart Express", "Economy", 25.0, "Economy class ticket", "available",
                 "04-12-2001", "8.45am", "2 Hours", "10.45am");
         Ticket ticket2 = new Ticket("KKKL Express", "Business", 50.0, "Business class ticket", "available",
                 "04-12-2001", "8.45am", "4 Hours", "12.45pm");
-        Passenger passenger1 = new Passenger(1, "Ahmad Abdullah", "123 Jalan Raya", "Active");
-        Passenger passenger2 = new Passenger(2, "Siti Aminah", "456 Jalan Bahagia", "Active");
+        Passenger passenger1 = new Passenger("Ahmad Abdullah", "123 Jalan Raya", "Active");
+        Passenger passenger2 = new Passenger("Siti Aminah", "456 Jalan Bahagia", "Active");
 
         ticketingSystem.addBookingItem(ticket1);
         ticketingSystem.addBookingItem(ticket2);
@@ -358,8 +363,16 @@ public class BusTicketingSystem {
             System.out.println("11. Delete Ticket");
             System.out.println("12. Edit Ticket Information");
             System.out.println("13. Exit\n");
-            System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
+
+            try {
+                System.out.print("Enter your choice: ");
+                choice = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                // System.out.println("Invalid input. Please enter a valid integer.");
+                // Clear the buffer to prevent an infinite loop
+                scanner.nextLine();
+                choice = 0; // Set a default value or handle it according to your logic
+            }
             System.out.print("\n");
 
             switch (choice) {
@@ -400,8 +413,10 @@ public class BusTicketingSystem {
                     System.out.print("Enter ticket ID to pay for (Business/Economy): ");
                     int payTicketid = scanner.nextInt();
                     scanner.nextLine();
+
                     Passenger payPassenger = findPassengerById(payPassengerId);
                     Ticket payTicket = findTicketById(payTicketid);
+
                     if (payPassenger != null && payTicket != null) {
                         payTicket.pay();
                         ticketingSystem.displayBookingItems();
@@ -410,9 +425,14 @@ public class BusTicketingSystem {
                     }
                     break;
                 case 4: // delete booking item
+                    scanner.nextLine();
+                    System.out.print("Enter item type (Ticket/Passenger): ");
+                    String itemType = scanner.nextLine().toLowerCase();
+
                     System.out.print("Enter item ID to delete: ");
                     int deleteItemId = scanner.nextInt();
-                    BookingItem itemToDelete = findItemById(deleteItemId);
+                    BookingItem itemToDelete = findItemById(deleteItemId, itemType);
+
                     if (itemToDelete != null) {
                         ticketingSystem.deleteBookingItem(itemToDelete);
                         ticketingSystem.displayBookingItems();
@@ -422,10 +442,7 @@ public class BusTicketingSystem {
                     break;
                 case 5:
                     // ... (Adding a new passenger functionality)
-                    System.out.print("Enter ID Passenger: ");
-                    int passengerId = scanner.nextInt();
                     scanner.nextLine();
-
                     System.out.print("Enter passenger name: ");
                     String passengerName = scanner.nextLine();
 
@@ -433,10 +450,9 @@ public class BusTicketingSystem {
                     String passengerAddress = scanner.nextLine();
 
                     System.out.print("Passenger Status (Active/Not Active): ");
-                    String passengerStatus = scanner.nextLine();
+                    String passengerStatus = scanner.nextLine().trim().toLowerCase();
 
-                    ticketingSystem.addBookingItem(
-                            new Passenger(passengerId, passengerName, passengerAddress, passengerStatus));
+                    ticketingSystem.addBookingItem(new Passenger(passengerName, passengerAddress, passengerStatus));
 
                     ticketingSystem.displayBookingItems();
                     break;
@@ -482,7 +498,7 @@ public class BusTicketingSystem {
                         String newAddress = scanner.nextLine();
 
                         System.out.print("Enter new passenger status (Active/Not Active): ");
-                        String newStatus = scanner.nextLine();
+                        String newStatus = scanner.nextLine().trim().toLowerCase();
 
                         passengerToEdit.setName(newName);
                         passengerToEdit.setAddress(newAddress);
@@ -497,11 +513,12 @@ public class BusTicketingSystem {
 
                 case 9:
                     // Add New Ticket
+                    scanner.nextLine();
                     System.out.print("Enter Bus Name: ");
                     String busName = scanner.nextLine();
 
-                    System.out.print("Enter ticket type: ");
-                    String newTicketType = scanner.nextLine();
+                    System.out.print("Enter ticket type (Business/Economy): ");
+                    String newTicketType = scanner.nextLine().trim().toLowerCase();
 
                     System.out.print("Enter ticket rate: ");
                     double newTicketRate = scanner.nextDouble();
@@ -532,6 +549,7 @@ public class BusTicketingSystem {
 
                 case 10:
                     // Display Ticket
+                    scanner.nextLine();
                     System.out.print("Enter ticket type to display (Business/Economy): ");
                     String displayTicketType = scanner.next();
                     Ticket displayTicket = findTicketByType(displayTicketType);
@@ -557,7 +575,7 @@ public class BusTicketingSystem {
                     }
                     break;
 
-                case 12:
+                case 12: //edit ticket information
                     ticketingSystem.displayBookingItems();
                     System.out.print("Enter ticket ID to edit : ");
                     int editTicketId = scanner.nextInt();
@@ -591,8 +609,9 @@ public class BusTicketingSystem {
                     } else {
                         System.out.println("Ticket not found.");
                     }
-                    break;
+                break;
             }
+            
 
         } while (choice != 13);
 
