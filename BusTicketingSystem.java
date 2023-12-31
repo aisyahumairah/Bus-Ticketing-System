@@ -1,17 +1,17 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class Seat {
-    private String seatNumber;
-    private String status;
+abstract class Ticket {
+    protected String ticketNumber;
+    protected String status;
 
-    public Seat(String seatNumber, String status) {
-        this.seatNumber = seatNumber;
+    public Ticket(String ticketNumber, String status) {
+        this.ticketNumber = ticketNumber;
         this.status = status;
     }
 
-    public String getSeatNumber() {
-        return seatNumber;
+    public String getTicketNumber() {
+        return ticketNumber;
     }
 
     public String getStatus() {
@@ -23,18 +23,42 @@ class Seat {
     }
 }
 
-class Passenger {
+interface Bookable {
+    boolean bookTicket(String ticketNumber);
+
+    boolean cancelBooking(String ticketNumber);
+
+    boolean makePayment();
+}
+
+class Seat extends Ticket {
+    private String seatNumber;
+
+    public Seat(String seatNumber, String status) {
+        super(seatNumber, status);
+        this.seatNumber = seatNumber;
+    }
+
+    public String getSeatNumber() {
+        return seatNumber;
+    }
+}
+
+class Passenger extends Ticket implements Bookable {
     private static int passengerIdCounter = 1;
     private int idPassenger;
     private String name;
     private String address;
     private String seatNo;
+    private boolean isPaid;
 
     public Passenger(String name, String address) {
+        super("", ""); // Using empty string as placeholders for passenger's ticketNumber and status
         this.idPassenger = passengerIdCounter++;
         this.name = name;
         this.address = address;
         this.seatNo = "";
+        this.isPaid = false;
     }
 
     public int getIdPassenger() {
@@ -53,8 +77,38 @@ class Passenger {
         return seatNo;
     }
 
-    public void setSeatNo(String seatNo) {
-        this.seatNo = seatNo;
+    public boolean isPaid() {
+        return isPaid;
+    }
+
+    @Override
+    public boolean bookTicket(String ticketNumber) {
+        if (this.status.equals("")) {
+            this.setStatus("Booked");
+            this.ticketNumber = ticketNumber;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean cancelBooking(String ticketNumber) {
+        if (!this.isPaid && this.ticketNumber.equals(ticketNumber)) {
+            this.setStatus("");
+            this.ticketNumber = "";
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean makePayment() {
+        if (this.status.equals("Booked")) {
+            this.setStatus("Paid");
+            this.isPaid = true;
+            return true;
+        }
+        return false;
     }
 
     public void setName(String name) {
@@ -63,6 +117,10 @@ class Passenger {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public void setSeatNo(String seatNo) {
+        this.seatNo = seatNo;
     }
 }
 
@@ -74,17 +132,6 @@ public class BusTicketingSystem {
         passengers = new ArrayList<>();
         busSeats = new ArrayList<>();
         generateBusLayout();
-        displayBusDetails(); // Display bus company details
-    }
-
-    private void displayBusDetails() {
-        System.out.println("Bus Company Details:");
-        System.out.println("--------------------");
-        System.out.println("Bus name: Mayang Sari");
-        System.out.println("Route: KL to Johor");
-        System.out.println("Departure time: 12.45 PM");
-        System.out.println("Arrival time: 4.00 PM");
-        System.out.println("Price: RM75\n");
     }
 
     public void displayBookingItems() {
@@ -118,7 +165,7 @@ public class BusTicketingSystem {
 
         for (int i = 1; i <= 18; i++) {
             String seatNumber = "[" + row + column + "]";
-            String status = "[" + seatNumber + "]";
+            String status = "[" + seatNumber + " - Available]";
             busSeats.add(new Seat(seatNumber, status));
 
             if (i % 6 == 0) {
@@ -134,8 +181,8 @@ public class BusTicketingSystem {
         BusTicketingSystem ticketingSystem = new BusTicketingSystem();
 
         // Creating two initial passengers
-        Passenger passenger1 = new Passenger("Ahmad bin Abdullah", "Kuala Lumpur, Malaysia");
-        Passenger passenger2 = new Passenger("Siti Aishah binti Lim", "Penang, Malaysia");
+        Passenger passenger1 = new Passenger("John Doe", "123 Main St");
+        Passenger passenger2 = new Passenger("Jane Smith", "456 Elm St");
 
         // Booking a seat for passenger1 (A1 as an example)
         passenger1.setSeatNo("A1");
@@ -163,7 +210,8 @@ public class BusTicketingSystem {
             System.out.println("5. Cancel Booking");
             System.out.println("6. Add Passenger");
             System.out.println("7. Delete Passenger");
-            System.out.println("8. Exit\n");
+            System.out.println("8. Make Payment for Passenger");
+            System.out.println("9. Exit\n");
 
             System.out.print("Enter your choice: ");
             choice = scanner.nextInt();
@@ -189,23 +237,27 @@ public class BusTicketingSystem {
                             seatAlreadyBooked = true;
                             break;
                         } else if (seat.getSeatNumber().equals("[" + seatToBook + "]")) {
-                            seat.setStatus("[" + seatToBook + " - Booked]");
-                            for (Passenger passenger : passengers) {
-                                if (passenger.getIdPassenger() == passengerIdToBook) {
-                                    passenger.setSeatNo(seatToBook);
-                                    break;
+                            if (seat.getStatus().contains("Available")) {
+                                seat.setStatus("[" + seatToBook + " - Booked]");
+                                for (Passenger passenger : passengers) {
+                                    if (passenger.getIdPassenger() == passengerIdToBook) {
+                                        passenger.setSeatNo(seatToBook);
+                                        break;
+                                    }
                                 }
+                                seatFound = true;
+                                System.out.println("Seat " + seatToBook + " booked successfully for passenger ID "
+                                        + passengerIdToBook + ".");
+                                break;
+                            } else {
+                                System.out.println("Seat " + seatToBook + " is already booked.");
+                                seatAlreadyBooked = true;
+                                break;
                             }
-                            seatFound = true;
-                            System.out.println("Seat " + seatToBook + " booked successfully for passenger ID "
-                                    + passengerIdToBook + ".");
-                            break;
                         }
                     }
 
-                    if (seatAlreadyBooked) {
-                        System.out.println("Seat " + seatToBook + " is already booked.");
-                    } else if (!seatFound) {
+                    if (!seatFound && !seatAlreadyBooked) {
                         System.out.println("Invalid seat number. Seat not found.");
                     }
 
@@ -245,12 +297,11 @@ public class BusTicketingSystem {
 
                         String previousSeat = passengerToEdit.getSeatNo();
                         for (Seat seat : busSeats) {
-                            if (seat.getSeatNumber().equals("[" + previousSeat + "]")) {
-                                seat.setStatus("[" + previousSeat + "]");
+                            if (seat.getSeatNumber().equals("[" + previousSeat + " - Booked]")) {
+                                seat.setStatus("[" + previousSeat + " - Available]");
                                 break;
                             }
                         }
-                        
 
                         passengerToEdit.setName(newName);
                         passengerToEdit.setAddress(newAddress);
@@ -264,8 +315,6 @@ public class BusTicketingSystem {
                         }
 
                         System.out.println("Passenger information updated successfully.");
-
-                        // Update display after changing seat
                         ticketingSystem.displayBookingItems();
                     } else {
                         System.out.println("Passenger not found.");
@@ -287,16 +336,24 @@ public class BusTicketingSystem {
 
                     if (passengerToCancel != null) {
                         String seatToFree = passengerToCancel.getSeatNo();
+                        boolean foundSeat = false;
                         for (Seat seat : busSeats) {
                             if (seat.getSeatNumber().equals("[" + seatToFree + "]")) {
-                                seat.setStatus("[" + seatToFree + "]");
-                                // Clear the seat number of the canceled booking
-                                passengerToCancel.setSeatNo("");
-                                System.out.println("Booking canceled successfully.");
-                                ticketingSystem.displayBookingItems(); // Update display after canceling booking
+                                if (seat.getStatus().equals("[" + seatToFree + " - Booked]")) {
+                                    seat.setStatus("[" + seatToFree + " - Available]");
+                                    passengerToCancel.setSeatNo("");
+                                    System.out.println("Booking canceled successfully.");
+                                } else {
+                                    System.out.println("The seat is not currently booked.");
+                                }
+                                foundSeat = true;
                                 break;
                             }
                         }
+                        if (!foundSeat) {
+                            System.out.println("Seat not found.");
+                        }
+                        ticketingSystem.displayBookingItems();
                     } else {
                         System.out.println("Passenger not found.");
                     }
@@ -347,6 +404,49 @@ public class BusTicketingSystem {
                     break;
 
                 case 8:
+                    System.out.print("Enter passenger ID to make payment: ");
+                    int paymentPassengerId = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Passenger passengerToPay = null;
+                    for (Passenger passenger : passengers) {
+                        if (passenger.getIdPassenger() == paymentPassengerId) {
+                            passengerToPay = passenger;
+                            break;
+                        }
+                    }
+
+                    if (passengerToPay != null) {
+                        String seatToPay = passengerToPay.getSeatNo();
+                        boolean seatStatus = false;
+
+                        for (Seat seat : busSeats) {
+                            String seatNum = seat.getSeatNumber().substring(1, seat.getSeatNumber().length() - 1);
+                            if (seatNum.equals(seatToPay) && seat.getStatus().contains("Booked")
+                                    && !seat.getStatus().contains("Paid")) {
+                                if (passengerToPay.makePayment()) {
+                                    seat.setStatus("[" + seatToPay + " - Paid]");
+                                    System.out.println(
+                                            "Payment made successfully for passenger ID: " + paymentPassengerId);
+                                } else {
+                                    System.out.println("Payment cannot be made for this passenger.");
+                                }
+                                seatStatus = true;
+                                break;
+                            }
+                        }
+
+                        if (!seatStatus) {
+                            System.out.println("Invalid seat or payment already processed.");
+                        }
+
+                        ticketingSystem.displayBookingItems();
+                    } else {
+                        System.out.println("Passenger not found.");
+                    }
+                    break;
+
+                case 9:
                     System.out.println("Exiting... Thank you!");
                     break;
 
@@ -355,7 +455,7 @@ public class BusTicketingSystem {
                     break;
             }
 
-        } while (choice != 8);
+        } while (choice != 9);
 
         scanner.close();
     }
