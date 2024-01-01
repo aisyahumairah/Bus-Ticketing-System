@@ -135,7 +135,12 @@ public class BusTicketingSystem {
     }
 
     public void displayBookingItems() {
-        System.out.println("Booking Items:");
+        System.out.println("-------------");
+        System.out.println("Bas Mayang Sari");
+        System.out.println("Route : KL to Johor");
+        System.out.println("Departure time : 12.45pm");
+        System.out.println("Arrival time : 4.00pm");
+        System.out.println("Price : RM55");
         System.out.println("-------------");
 
         // Display Passenger details
