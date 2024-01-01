@@ -217,14 +217,29 @@ public class BusTicketingSystem {
                 choice = scanner.nextInt();
                 scanner.nextLine();
                 switch (choice) {
-                    case 1:
+                    case 1: // Display Booking Items
                         ticketingSystem.displayBookingItems();
                         break;
 
-                    case 2:
+                    case 2: // Book Seat for Passenger
                         System.out.print("Enter passenger ID: ");
                         int passengerIdToBook = scanner.nextInt();
                         scanner.nextLine();
+
+                        // Check if the passenger with the specified ID exists
+                        boolean passengerFound = false;
+                        for (Passenger passenger : passengers) {
+                            if (passenger.getIdPassenger() == passengerIdToBook) {
+                                passengerFound = true;
+                                break;
+                            }
+                        }
+
+                        if (!passengerFound) {
+                            System.out.println(
+                                    "Passenger with ID " + passengerIdToBook + " not found. Booking cannot be made.");
+                            break; // Exit the case
+                        }
 
                         System.out.print("Enter seat number to book (e.g., A1, B2, C3): ");
                         String seatToBook = scanner.nextLine();
@@ -263,7 +278,7 @@ public class BusTicketingSystem {
                         ticketingSystem.displayBookingItems();
                         break;
 
-                    case 3:
+                    case 3: // Display Bus Layout
                         System.out.println("Bus Layout:");
                         for (Seat seat : busSeats) {
                             System.out.print(seat.getStatus() + " ");
@@ -271,7 +286,7 @@ public class BusTicketingSystem {
                         System.out.println();
                         break;
 
-                    case 4:
+                    case 4: // Edit Passenger Information
                         System.out.print("Enter passenger ID to edit: ");
                         int editPassengerId = scanner.nextInt();
                         scanner.nextLine();
@@ -326,7 +341,7 @@ public class BusTicketingSystem {
                         }
                         break;
 
-                    case 5:
+                    case 5: // Cancel Booking
                         System.out.print("Enter passenger ID to cancel booking: ");
                         int cancelPassengerId = scanner.nextInt();
                         scanner.nextLine();
@@ -364,7 +379,7 @@ public class BusTicketingSystem {
                         }
                         break;
 
-                    case 6:
+                    case 6: // Add Passenger
                         System.out.print("Enter passenger name: ");
                         String passengerNameInput = scanner.nextLine();
 
@@ -377,7 +392,7 @@ public class BusTicketingSystem {
                         ticketingSystem.displayBookingItems();
                         break;
 
-                    case 7:
+                    case 7: // Delete Passenger
                         System.out.print("Enter passenger ID to delete: ");
                         int deletePassengerId = scanner.nextInt();
                         scanner.nextLine();
@@ -408,7 +423,7 @@ public class BusTicketingSystem {
                         }
                         break;
 
-                    case 8:
+                    case 8: // Make Payment for Passenger
                         System.out.print("Enter passenger ID to make payment: ");
                         int paymentPassengerId = scanner.nextInt();
                         scanner.nextLine();
