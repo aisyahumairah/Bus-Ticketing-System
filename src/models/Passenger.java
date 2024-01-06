@@ -69,6 +69,11 @@ public class Passenger extends Ticket implements Bookable {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "Passenger ID: " + idPassenger + "\nName: " + name + "\nAddress: " + address;
+    }
+
     public void setName(String firstName, String lastName) {
         this.name = firstName + " " + lastName;
     }

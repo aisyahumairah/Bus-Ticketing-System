@@ -115,6 +115,10 @@ class Passenger extends Ticket implements Bookable {
         this.name = name;
     }
 
+    public void setName(String firstName, String lastName) {
+        this.name = firstName + " " + lastName;
+    }
+
     public void setAddress(String address) {
         this.address = address;
     }
@@ -187,7 +191,10 @@ public class BusTicketingSystem {
 
         // Creating two initial passengers
         Passenger passenger1 = new Passenger("Ahmad bin Abdullah", "Kuala Lumpur, Malaysia");
-        Passenger passenger2 = new Passenger("Siti Aishah binti Lim", "Penang, Malaysia");
+        Passenger passenger2 = new Passenger("Siti", "Penang, Malaysia");
+
+        // Applying overloading method
+        passenger2.setName("Siti Aisyah", "Lim");
 
         // Booking a seat for passenger1 (A1 as an example)
         passenger1.setSeatNo("A1");
