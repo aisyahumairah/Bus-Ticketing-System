@@ -1,4 +1,5 @@
 package src.models;
+
 import src.interfaces.Bookable;
 
 public class Passenger extends Ticket implements Bookable {
@@ -66,6 +67,10 @@ public class Passenger extends Ticket implements Bookable {
             return true;
         }
         return false;
+    }
+
+    public void setName(String firstName, String lastName) {
+        this.name = firstName + " " + lastName;
     }
 
     public void setName(String name) {

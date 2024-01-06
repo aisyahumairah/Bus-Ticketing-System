@@ -2,8 +2,9 @@ package src.main;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import src.models.Seat;
+
 import src.models.Passenger;
+import src.models.Seat;
 
 public class BusTicketingSystem {
     private static ArrayList<Passenger> passengers;
@@ -68,7 +69,10 @@ public class BusTicketingSystem {
 
         // Creating two initial passengers
         Passenger passenger1 = new Passenger("Ahmad bin Abdullah", "Kuala Lumpur, Malaysia");
-        Passenger passenger2 = new Passenger("Siti Aishah binti Lim", "Penang, Malaysia");
+        Passenger passenger2 = new Passenger("Siti", "Penang, Malaysia");
+
+        // Applying overloading method
+        passenger2.setName("Siti Aisyah", "Lim");
 
         // Booking a seat for passenger1 (A1 as an example)
         passenger1.setSeatNo("A1");
@@ -367,4 +371,3 @@ public class BusTicketingSystem {
         scanner.close();
     }
 }
-
