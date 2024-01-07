@@ -170,8 +170,11 @@ public class BusTicketingSystem {
 
                     case 3: // Display Bus Layout
                         System.out.println("Bus Layout:");
-                        for (Seat seat : busSeats) {
-                            System.out.print(seat.getStatus() + " ");
+                        for (int i = 0; i < busSeats.size(); i += 3) {
+                            for (int j = i; j < i + 3 && j < busSeats.size(); j++) {
+                                System.out.print(busSeats.get(j).getStatus() + " ");
+                            }
+                            System.out.println();
                         }
                         System.out.println();
                         break;
